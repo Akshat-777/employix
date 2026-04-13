@@ -25,7 +25,7 @@ const filterData = [
 
 const FilterCard = () => {
   const dispatch = useDispatch();
-  const { filterParams } = useSelector((store: RootState) => store.job);
+  const { filterParams = { Location: '', Industry: '', Salary: '' } } = useSelector((store: RootState) => store.job);
 
   const changeHandler = (category: string, value: string) => {
     dispatch(setFilterParams({ category, value }));
