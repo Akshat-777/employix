@@ -1,41 +1,45 @@
-import nodemailer from 'nodemailer';
+import axios from 'axios';
 
 const sendEmail = async ({ to, subject, text }) => {
   try {
-    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-      console.error("❌ MISSING SMTP CREDENTIALS: Set SMTP_USER and SMTP_PASS on Render.");
-      throw new Error("SMTP credentials are missing.");
+    const resendApiKey = process.env.RESEND_API_KEY;
+
+    if (!resendApiKey) {
+      console.error("❌ MISSING RESEND_API_KEY: Please set it on Render.");
+      throw new Error("Email service is not configured.");
     }
 
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 587,
-      secure: false, // Use STARTTLS
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
+    console.log("📨 Sending email via Resend API...");
+
+    const response = await axios.post(
+      "https://api.resend.com/emails",
+      {
+        from: "Employix <onboarding@resend.dev>",
+        to: [to],
+        subject: subject,
+        html: `
+          <div style="font-family: sans-serif; color: #333; line-height: 1.6;">
+            <h2 style="color: #4f46e5;">Employix Support</h2>
+            <p>${text.replace(/\n/g, '<br>')}</p>
+            <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
+            <p style="font-size: 12px; color: #666;">
+              This is an automated message. Please do not reply.
+            </p>
+          </div>
+        `,
       },
-      connectionTimeout: 10000, // 10 seconds
-      greetingTimeout: 10000,
-      socketTimeout: 10000,
-    });
+      {
+        headers: {
+          "Authorization": `Bearer ${resendApiKey}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
-    // Verify connection configuration before sending
-    console.log("🔍 Verifying SMTP connection...");
-    await transporter.verify();
-    console.log("✅ SMTP Connection Verified");
-
-    await transporter.sendMail({
-      from: `"Employix Support" <${process.env.SMTP_USER}>`,
-      to,
-      subject,
-      text,
-    });
-
-    console.log(`📧 Email sent successfully to ${to}`);
+    console.log("✅ Email sent successfully via Resend:", response.data.id);
   } catch (err) {
-    console.error("❌ MAIL ERROR:", err.message);
-    throw err; 
+    console.error("❌ RESEND ERROR:", err.response?.data || err.message);
+    throw new Error(err.response?.data?.message || "Failed to send email.");
   }
 };
 
