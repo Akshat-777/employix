@@ -35,7 +35,7 @@ const JobsPage = () => {
   }, [dispatch]);
 
   // Listen to Redux searchedQuery and filterParams changes
-  const { searchedQuery, filterParams } = useSelector((store: RootState) => store.job);
+  const { searchedQuery, filterParams = { Location: '', Industry: '', Salary: '' } } = useSelector((store: RootState) => store.job);
 
   useEffect(() => {
     let filteredJobs = [...allJobs];
@@ -44,37 +44,38 @@ const JobsPage = () => {
     if (searchedQuery) {
       filteredJobs = filteredJobs.filter((job) => {
         return (
-          job.title.toLowerCase().includes(searchedQuery.toLowerCase()) ||
-          job.description.toLowerCase().includes(searchedQuery.toLowerCase()) ||
-          job.location.toLowerCase().includes(searchedQuery.toLowerCase())
+          job?.title?.toLowerCase().includes(searchedQuery.toLowerCase()) ||
+          job?.description?.toLowerCase().includes(searchedQuery.toLowerCase()) ||
+          job?.location?.toLowerCase().includes(searchedQuery.toLowerCase())
         );
       });
     }
 
     // 2. Sidebar Filters
     // Location
-    if (filterParams.Location) {
+    if (filterParams?.Location) {
         filteredJobs = filteredJobs.filter((job) => 
-            job.location.toLowerCase().includes(filterParams.Location.toLowerCase())
+            job?.location?.toLowerCase().includes(filterParams.Location.toLowerCase())
         );
     }
 
     // Industry (mapped to title for now)
-    if (filterParams.Industry) {
+    if (filterParams?.Industry) {
         filteredJobs = filteredJobs.filter((job) => 
-            job.title.toLowerCase().includes(filterParams.Industry.toLowerCase())
+            job?.title?.toLowerCase().includes(filterParams.Industry.toLowerCase())
         );
     }
 
     // Salary (Parse range e.g. "5 - 10 LPA")
-    if (filterParams.Salary) {
+    if (filterParams?.Salary) {
         const range = filterParams.Salary.match(/(\d+)\s*-\s*(\d+)/);
         if (range) {
             const min = parseInt(range[1]);
             const max = parseInt(range[2]);
             filteredJobs = filteredJobs.filter((job) => {
+                if (!job?.salary) return false;
                 const jobSalary = typeof job.salary === 'number' ? job.salary : parseInt(job.salary);
-                return jobSalary >= min && jobSalary <= max;
+                return !isNaN(jobSalary) && jobSalary >= min && jobSalary <= max;
             });
         }
     }

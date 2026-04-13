@@ -35,8 +35,9 @@ const UploadResumePage = () => {
     try {
       setLoading(true);
 
+      const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/$/, "");
       const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/upload-resume`,
+        `${apiUrl}/api/v1/upload-resume`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },

@@ -3,18 +3,21 @@
 import React, { useState, useRef } from 'react';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Contact, Mail, Pen, FileText, Download, ExternalLink, Sparkles, Loader2 } from 'lucide-react';
+import { Contact, Mail, Pen, FileText, Download, ExternalLink, Sparkles, Loader2, MapPin } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import AppliedJobTable from '@/components/AppliedJobTable';
 import UpdateProfileDialog from '@/components/UpdateProfileDialog';
 import { useSelector, useDispatch } from 'react-redux';
+import { useRouter } from 'next/navigation';
 import useGetAppliedJobs from '@/hooks/useGetAppliedJobs';
 import { RootState } from '@/redux/store';
 import { motion } from 'framer-motion';
 import axios from 'axios';
-import { USER_API_END_POINT } from '@/utils/constant';
+import { USER_API_END_POINT, JOB_API_END_POINT } from '@/utils/constant';
 import { toast } from 'sonner';
 import { setUser } from '@/redux/authSlice';
+import { setAllJobs } from '@/redux/jobSlice';
+import { useEffect } from 'react';
 
 const ProfilePage = () => {
   useGetAppliedJobs();
@@ -22,7 +25,30 @@ const ProfilePage = () => {
   const [photoLoading, setPhotoLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { user } = useSelector((store: RootState) => store.auth);
+  const { allJobs } = useSelector((store: RootState) => store.job);
   const dispatch = useDispatch();
+  const router = useRouter();
+
+  // Fetch all jobs if not already present (needed for saved jobs full data)
+  useEffect(() => {
+    if (allJobs.length === 0) {
+      const fetchJobs = async () => {
+        try {
+          const res = await axios.get(`${JOB_API_END_POINT}/get`, { withCredentials: true });
+          if (res.data.success) {
+            dispatch(setAllJobs(res.data.jobs));
+          }
+        } catch (error) {
+          console.error("Error fetching jobs for profile:", error);
+        }
+      };
+      fetchJobs();
+    }
+  }, [allJobs.length, dispatch]);
+
+  const savedJobs = allJobs.filter(job => 
+    user?.profile?.savedJobs?.includes(job._id)
+  );
 
   const handlePhotoUpdate = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -216,6 +242,64 @@ const ProfilePage = () => {
             <Badge className="bg-indigo-50 text-indigo-700 border-indigo-100 font-bold px-3 py-1">Active Tracker</Badge>
           </div>
           <AppliedJobTable />
+        </motion.div>
+
+        {/* Saved Jobs Section */}
+        <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="mt-12 bg-white rounded-[2.5rem] p-8 md:p-12 shadow-xl border border-slate-50 min-h-[300px]"
+        >
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-2xl font-black text-slate-900 tracking-tight">Saved Jobs</h2>
+            <Badge className="bg-pink-50 text-pink-700 border-pink-100 font-bold px-3 py-1">Personal Collection</Badge>
+          </div>
+          
+          {savedJobs.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mb-4">
+                <FileText className="text-slate-300" size={32} />
+              </div>
+              <p className="text-slate-400 font-medium">No jobs saved for later yet.</p>
+              <Button 
+                variant="link" 
+                onClick={() => router.push('/jobs')}
+                className="text-indigo-600 mt-2"
+              >
+                Browse latest jobs
+              </Button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {savedJobs.map((job: any) => (
+                <div key={job._id} className="relative group">
+                    <div className="absolute inset-0 bg-indigo-500 rounded-2xl blur opacity-0 group-hover:opacity-10 transition-opacity" />
+                    <div 
+                      onClick={() => router.push(`/description/${job._id}`)}
+                      className="relative p-6 bg-slate-50 border border-slate-100 rounded-2xl cursor-pointer hover:border-indigo-100 transition-all"
+                    >
+                      <div className="flex justify-between items-start mb-4">
+                        <div className="flex items-center gap-3">
+                           <Avatar className="h-10 w-10 border border-white shadow-sm">
+                              <AvatarImage src={job?.company?.logo} />
+                           </Avatar>
+                           <div>
+                              <h3 className="font-bold text-slate-900 leading-tight">{job?.title}</h3>
+                              <p className="text-xs text-indigo-600 font-medium">{job?.company?.name}</p>
+                           </div>
+                        </div>
+                        <Badge variant="outline" className="bg-white text-[10px] uppercase tracking-tighter">{job?.jobType}</Badge>
+                      </div>
+                      <div className="flex items-center gap-4 text-xs text-slate-500 font-medium">
+                        <span className="flex items-center gap-1"><MapPin size={12} /> {job?.location}</span>
+                        <span className="text-indigo-700">₹ {job?.salary} LPA</span>
+                      </div>
+                    </div>
+                </div>
+              ))}
+            </div>
+          )}
         </motion.div>
       </main>
 
