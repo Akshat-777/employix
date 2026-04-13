@@ -4,16 +4,6 @@
 
 ---
 
-## 🌐 Live Deployment
-
-| Service | Platform | Status |
-| :--- | :--- | :--- |
-| **Frontend** | [Vercel](https://vercel.com) | ✅ [Live](https://employix-frontend.vercel.app) |
-| **Node.js Backend** | [Render](https://render.com) | ✅ [Live](https://employix-1.onrender.com) |
-| **Python NLP Service** | [Render](https://render.com) | ✅ [Live](https://employix-nlp.onrender.com) |
-
----
-
 ## ✨ Key Features
 
 ### 👤 For Candidates (Students)
