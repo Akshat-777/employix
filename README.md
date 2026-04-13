@@ -1,108 +1,96 @@
-# Employix - Premium Job Portal
+# Employix - Premium Job Portal 🚀
 
-Employix is a modern, full-stack job portal designed to streamline the recruitment process for both students and recruiters. Built with high-performance technologies, it features real-time communication, a sophisticated admin dashboard, and a seamless user experience.
+**Employix** is a high-performance, full-stack recruitment platform designed to bridge the gap between top talent and world-class companies. Built with a modern microservices architecture, it features real-time communication, AI-driven resume analysis, and a stunning, premium user interface.
 
-## 🚀 Features
+---
 
-### For Students
-- **Smart Job Search**: Filter and browse jobs by categories and title.
-- **Profile Management**: Upload resumes, update personal bio, and track applications.
-- **Real-time Chat**: Direct communication with recruiters via integrated messaging.
-- **Application Tracking**: Monitor the status of applied jobs in real-time.
+## 🌐 Live Deployment
 
-### For Recruiters
-- **Company Management**: Register and manage multiple company profiles.
-- **Job Posting**: Create, update, and manage job listings with ease.
-- **Applicant Tracking**: View applications, review resumes, and manage hiring statuses.
-- **Real-time Communication**: Message potential candidates instantly.
+| Service | Platform | Status |
+| :--- | :--- | :--- |
+| **Frontend** | [Vercel](https://vercel.com) | ✅ [Live](https://employix-frontend.vercel.app) |
+| **Node.js Backend** | [Render](https://render.com) | ✅ [Live](https://employix-1.onrender.com) |
+| **Python NLP Service** | [Render](https://render.com) | ✅ [Live](https://employix-nlp.onrender.com) |
 
-### AI-Powered Analysis
-- **Resume Parsing**: Automatically extracts skills and experience from PDF resumes using NLP.
-- **Job Matching**: AI-driven recommendation engine that matches candidates to jobs based on skill overlap.
-- **Skill Gap Analysis**: Identifies missing skills required for specific job roles to help students improve.
+---
 
-## 🛠️ Tech Stack
+## ✨ Key Features
 
-- **Frontend**: [Next.js](https://nextjs.org/), [Redux Toolkit](https://redux-toolkit.js.org/), [Tailwind CSS](https://tailwindcss.com/), [Shadcn UI](https://ui.shadcn.com/), [Framer Motion](https://www.framer.com/motion/).
-- **Backend (Node.js)**: [Node.js](https://nodejs.org/), [Express](https://expressjs.com/), [MongoDB](https://www.mongodb.com/) (Mongoose), [Socket.io](https://socket.io/).
-- **AI/ML Logic (Python)**: [Flask](https://flask.palletsprojects.com/), [spaCy](https://spacy.io/) (NLP), [PyMuPDF](https://pymupdf.readthedocs.io/).
-- **Storage/File Handling**: [Cloudinary](https://cloudinary.com/) for media, [Multer](https://github.com/expressjs/multer) for file uploads.
-- **Communication**: [Nodemailer](https://nodemailer.com/) for email notifications, Socket.io for real-time chat.
+### 👤 For Candidates (Students)
+- **Advanced Job Discovery**: Multi-parameter filtering (Title, Location, Salary in LPA).
+- **Interactive Profile**: Dynamic resume management and real-time application tracking.
+- **Save for Later**: Keep track of high-interest roles with a dedicated "Saved Jobs" dashboard.
+- **Smart Chat**: Real-time direct messaging with recruiters, featuring persistent file sharing and **image previews**.
 
-## 📦 Installation & Setup
+### 💼 For Recruiters
+- **Company Branding**: Register and manage professional company profiles.
+- **Robust Job Management**: Post, edit, and track job listings with detailed salary insights.
+- **Applicant Insights**: View candidate profiles and download resumes with a single click.
 
-### Prerequisites
-- Node.js & npm installed
-- Python 3.9+ installed
-- MongoDB account (Atlas)
-- Cloudinary account
+### 🧠 AI-Powered Resume Analysis
+- **NLP Parsing**: Automatically Extracts skills and experience from PDF resumes via a specialized Python/Flask microservice.
+- **Skill Alignment**: AI-driven matching engine that identifies the overlap between candidate resumes and job descriptions.
 
-### Backend (Node.js) Setup
-1. Navigate to the backend directory:
-   ```bash
-   cd backend
-   ```
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Create a `.env` file in the `backend` folder (use `.env.example` as a template).
+---
 
-### Python AI Logic Setup
-1. Navigate to the python logic directory:
-   ```bash
-   cd backend/python_logic
-   ```
-2. Create a virtual environment:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\\Scripts\\activate
-   ```
-3. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   python -m spacy download en_core_web_sm
-   ```
-4. Create a `.env` file in the `python_logic` folder:
-   ```env
-   MONGO_URI=your_mongodb_uri
-   FRONTEND_URL=http://localhost:3000
-   FLASK_PORT=5002
-   ```
-5. Start the Flask server:
-   ```bash
-   python app.py
-   ```
+## 🛠️ Technology Stack
 
-### Frontend Setup
-1. Navigate to the frontend directory:
-   ```bash
-   cd frontend
-   ```
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Start the dev server:
-   ```bash
-   npm run dev
-   ```
+### Frontend
+- **Framework**: [Next.js](https://nextjs.org/) (App Router)
+- **State Management**: [Redux Toolkit](https://redux-toolkit.js.org/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/) & [Vanilla CSS](https://developer.mozilla.org/en-US/docs/Web/CSS)
+- **Icons & UI**: [Lucide React](https://lucide.dev/), [Sonner](https://sonner.steveney.com/) (Premium Toasts)
 
-## 📂 Project Structure
+### Backend
+- **Core API**: [Node.js](https://nodejs.org/) & [Express](https://expressjs.com/)
+- **Database**: [MongoDB](https://www.mongodb.com/) (Mongoose)
+- **Real-time**: [Socket.io](https://socket.io/)
+- **Cloud Storage**: [Cloudinary](https://cloudinary.com/) (Resume, Profiles, Chat Media)
+
+### AI Service
+- **Microservice**: [Flask](https://flask.palletsprojects.com/) (Python)
+- **NLP**: [spaCy](https://spacy.io/) & [PyMuPDF](https://pymupdf.readthedocs.io/)
+
+---
+
+## 📂 Project Architecture
 
 ```text
 employix/
-├── backend/          # Node.js Express server
-│   ├── controllers/  # API logic
-│   ├── models/       # Database schemas
-│   ├── routes/       # API endpoints
-│   └── index.js      # Entry point
-├── frontend/         # Next.js Application
-│   ├── src/app/      # App router pages
-│   ├── components/   # UI components
-│   └── redux/        # State management
-└── .gitignore        # Root level ignore
+├── backend/            # Express.js API
+│   ├── controllers/    # Business Logic
+│   ├── models/         # MongoDB Schemas
+│   ├── routes/         # API Layer
+│   └── python_logic/   # Flask NLP Microservice
+└── frontend/           # Next.js UI
+    ├── src/app/        # Pages & Layouts
+    ├── components/     # Reusable UI
+    └── redux/          # Global State
 ```
 
+---
+
+## 🔧 Environment Configuration
+
+To run this project locally, configure the following:
+
+### Backend `.env`
+```env
+MONGO_URI=your_mongodb_uri
+SECRET_KEY=your_jwt_secret
+CLOUD_NAME=your_cloudinary_name
+API_KEY=your_cloudinary_key
+API_SECRET=your_cloudinary_secret
+FRONTEND_URL=http://localhost:3000
+FLASK_URL=http://localhost:5000
+```
+
+### Frontend `.env.local`
+```env
+NEXT_PUBLIC_API_URL=http://localhost:8000
+```
+
+---
+
 ## 📄 License
-This project is licensed under the ISC License.
+This project is licensed under the **ISC License**. Built with ❤️ by the Employix Team.
