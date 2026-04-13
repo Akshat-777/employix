@@ -76,7 +76,7 @@ const PostJobPage = () => {
             { label: 'Job Title', name: 'title', placeholder: 'e.g., Frontend Developer' },
             { label: 'Description', name: 'description', placeholder: 'Brief job description' },
             { label: 'Requirements', name: 'requirements', placeholder: 'Skills, qualifications' },
-            { label: 'Salary', name: 'salary', placeholder: 'e.g., ₹30,000 - ₹50,000' },
+            { label: 'Salary (LPA)', name: 'salary', placeholder: 'e.g., 5, 8, 12' },
             { label: 'Location', name: 'location', placeholder: 'City, State' },
             { label: 'Job Type', name: 'jobType', placeholder: 'Full-time, Part-time' },
             { label: 'Experience Level', name: 'experience', placeholder: 'e.g., 2+ years' },
