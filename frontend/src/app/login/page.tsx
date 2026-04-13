@@ -118,15 +118,6 @@ const LoginPage = () => {
               />
             </div>
 
-            <div className="text-right mb-4">
-              <Link
-                href="/forgot-password"
-                className="text-sm text-indigo-600 hover:underline font-medium"
-              >
-                Forgot Password?
-              </Link>
-            </div>
-
             <div className="mb-6 flex justify-center gap-6">
               {['student', 'recruiter'].map((role) => (
                 <div key={role} className="flex items-center space-x-2">

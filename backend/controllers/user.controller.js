@@ -4,9 +4,6 @@ import jwt from "jsonwebtoken";
 import getDataUri from "../utils/datauri.js";
 import cloudinary from "../utils/cloudinary.js";
 import dotenv from 'dotenv';
-import crypto from 'crypto';
-import { generateResetToken } from "../utils/resetToken.js"; 
-import sendEmail from "../utils/sendEmail.js";  
 
 dotenv.config();
 
@@ -187,97 +184,6 @@ export const logout = async (req, res) => {
 };
 
 
-export const forgotPassword = async (req, res) => {
-  try {
-    const { email } = req.body;
-    if (!email)
-      return res
-        .status(400)
-        .json({ success: false, message: "Email is required" });
-
-    const user = await User.findOne({ email });
-    if (!user)
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found with this email" });
-
-    const { token, hashedToken } = generateResetToken();
-
-    user.resetPasswordToken = hashedToken;
-    user.resetPasswordExpire = Date.now() + 15 * 60 * 1000;
-    await user.save();
-
-    const frontendUrl = (process.env.FRONTEND_URL || "http://localhost:5173").replace(/\/$/, "");
-    const resetUrl = `${frontendUrl}/reset-password/${token}`;
-    const message = `You requested a password reset. Click the link: ${resetUrl}\nIf not requested, ignore this email.`;
-
-    await sendEmail({
-      to: user.email,
-      subject: "Password Reset Request",
-      text: message,
-    });
-
-    return res
-      .status(200)
-      .json({ success: true, message: "Reset link sent to email" });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({ success: false, message: "Server Error" });
-  }
-};
-
-
-export const resetPassword = async (req, res) => {
-  try {
-    const { token } = req.params;
-    const { password } = req.body;
-    if (!password)
-      return res
-        .status(400)
-        .json({ success: false, message: "Password is required" });
-
-    const hashedToken = crypto
-      .createHash("sha256")
-      .update(token)
-      .digest("hex");
-    const user = await User.findOne({
-      resetPasswordToken: hashedToken,
-      resetPasswordExpire: { $gt: Date.now() },
-    });
-
-    if (!user)
-      return res
-        .status(400)
-        .json({ success: false, message: "Token is invalid or expired" });
-
-    const isStrongPassword =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?#&])[A-Za-z\d@$!%*?#&]{8,}$/.test(
-        password
-      );
-    if (!isStrongPassword) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "Password must be strong (8+ chars, uppercase, lowercase, number, special).",
-      });
-    }
-
-    user.password = await bcrypt.hash(password, 10);
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpire = undefined;
-
-    await user.save();
-
-    return res
-      .status(200)
-      .json({ success: true, message: "Password reset successfully" });
-  } catch (err) {
-    console.log(err);
-    return res
-      .status(500)
-      .json({ success: false, message: "Internal Server Error" });
-  }
-};
 
 
 export const getUserById = async (req, res) => {
