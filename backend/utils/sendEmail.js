@@ -2,6 +2,10 @@ import nodemailer from 'nodemailer';
 
 const sendEmail = async ({ to, subject, text }) => {
   try {
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+      throw new Error("SMTP credentials (SMTP_USER/SMTP_PASS) are missing in environment variables.");
+    }
+
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
