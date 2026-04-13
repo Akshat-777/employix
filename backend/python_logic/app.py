@@ -18,8 +18,8 @@ load_dotenv()
 app = Flask(__name__)
 
 
-FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000")
-CORS(app, origins=[FRONTEND_URL, "http://localhost:3000"], supports_credentials=True)
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000").rstrip("/")
+CORS(app, origins=[FRONTEND_URL, "http://localhost:3000", "http://localhost:5173"], supports_credentials=True)
 
 
 print(" Loading spaCy model...")

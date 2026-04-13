@@ -28,10 +28,11 @@ app.use(cookieParser());
 app.set("trust proxy", 1);
 
 
+const frontendUrl = process.env.FRONTEND_URL ? process.env.FRONTEND_URL.replace(/\/$/, "") : "http://localhost:5173";
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
-   // origin: process.env.FRONTEND_URL ,
+    origin: [frontendUrl, "http://localhost:5173", "http://localhost:3000"],
     credentials: true,
   })
 );
@@ -50,8 +51,7 @@ app.use("/api/v1/messages", messageRoutes);
 
 const io = new Server(server, {
   cors: {
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
-   // origin: process.env.FRONTEND_URL,
+    origin: [frontendUrl, "http://localhost:5173", "http://localhost:3000"],
     credentials: true,
   },
 });
