@@ -38,6 +38,20 @@ const SignupPage = () => {
 
   const submitHandler = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Frontend Validation
+    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.email);
+    if (!isValidEmail) return toast.error("Please enter a valid email address.");
+
+    if (!/^\d{10}$/.test(input.phoneNumber)) {
+        return toast.error("Phone number must be exactly 10 digits (no spaces or +91).");
+    }
+
+    const isStrongPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?#&])[A-Za-z\d@$!%*?#&]{8,}$/.test(input.password);
+    if (!isStrongPassword) {
+        return toast.error("Password is too weak. Please follow the requirements below.");
+    }
+
     const formData = new FormData();
     formData.append('fullname', input.fullname);
     formData.append('email', input.email);
@@ -59,7 +73,7 @@ const SignupPage = () => {
         toast.success(res.data.message);
       }
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Signup failed');
+      toast.error(error.response?.data?.message || 'Signup failed. Please try again.');
     } finally {
       dispatch(setLoading(false));
     }
