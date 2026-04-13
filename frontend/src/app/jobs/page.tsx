@@ -10,6 +10,8 @@ import { setAllJobs, setSearchedQuery } from '@/redux/jobSlice';
 import { JOB_API_END_POINT } from '@/utils/constant';
 import axios from 'axios';
 
+const DEFAULT_FILTER_PARAMS = { Location: '', Industry: '', Salary: '' };
+
 const JobsPage = () => {
   const { allJobs } = useSelector((store: RootState) => store.job);
   const [filterJobs, setFilterJobs] = useState(allJobs);
@@ -35,7 +37,8 @@ const JobsPage = () => {
   }, [dispatch]);
 
   // Listen to Redux searchedQuery and filterParams changes
-  const { searchedQuery, filterParams = { Location: '', Industry: '', Salary: '' } } = useSelector((store: RootState) => store.job);
+  const { searchedQuery, filterParams: filterParamsFromStore } = useSelector((store: RootState) => store.job);
+  const filterParams = filterParamsFromStore || DEFAULT_FILTER_PARAMS;
 
   useEffect(() => {
     let filteredJobs = [...allJobs];

@@ -8,6 +8,8 @@ import { RootState } from '@/redux/store';
 import { Button } from './ui/button';
 import { XCircle } from 'lucide-react';
 
+const DEFAULT_FILTER_PARAMS = { Location: '', Industry: '', Salary: '' };
+
 const filterData = [
   {
     filterType: "Location",
@@ -25,7 +27,8 @@ const filterData = [
 
 const FilterCard = () => {
   const dispatch = useDispatch();
-  const { filterParams = { Location: '', Industry: '', Salary: '' } } = useSelector((store: RootState) => store.job);
+  const { filterParams: filterParamsFromStore } = useSelector((store: RootState) => store.job);
+  const filterParams = filterParamsFromStore || DEFAULT_FILTER_PARAMS;
 
   const changeHandler = (category: string, value: string) => {
     dispatch(setFilterParams({ category, value }));
