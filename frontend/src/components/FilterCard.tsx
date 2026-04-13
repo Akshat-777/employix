@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState } from 'react';
 import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 import { Label } from './ui/label';
-import { useDispatch } from 'react-redux';
-import { setSearchedQuery } from '@/redux/jobSlice';
-import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setFilterParams, clearFilters } from '@/redux/jobSlice';
+import { RootState } from '@/redux/store';
+import { Button } from './ui/button';
+import { XCircle } from 'lucide-react';
 
 const filterData = [
   {
@@ -23,24 +24,40 @@ const filterData = [
 ];
 
 const FilterCard = () => {
-  const [selectedValue, setSelectedValue] = useState('');
   const dispatch = useDispatch();
+  const { filterParams } = useSelector((store: RootState) => store.job);
 
-  const changeHandler = (value: string) => setSelectedValue(value);
+  const changeHandler = (category: string, value: string) => {
+    dispatch(setFilterParams({ category, value }));
+  };
 
-  useEffect(() => {
-    dispatch(setSearchedQuery(selectedValue));
-  }, [selectedValue, dispatch]);
+  const handleClearFilters = () => {
+    dispatch(clearFilters());
+  };
 
   return (
     <div className="w-full max-w-md mx-auto p-6 bg-gradient-to-br from-indigo-100 to-blue-50 text-gray-800 border border-indigo-200 rounded-2xl shadow-lg animate-fade-in">
-      <h2 className="text-2xl font-bold mb-4 text-indigo-700">🎯 Filter Jobs</h2>
+      <div className="flex items-center justify-between mb-4">
+         <h2 className="text-2xl font-bold text-indigo-700">🎯 Filter Jobs</h2>
+         <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={handleClearFilters}
+            className="text-gray-500 hover:text-red-500 hover:bg-red-50 gap-1"
+          >
+            <XCircle size={16} /> 
+            <span className="text-xs">Clear</span>
+         </Button>
+      </div>
       <hr className="border-indigo-300 mb-4" />
 
-      <RadioGroup value={selectedValue} onValueChange={changeHandler}>
-        {filterData.map((section, index) => (
-          <div key={index} className="mb-6">
-            <h3 className="text-lg font-semibold mb-3 text-blue-800">{section.filterType}</h3>
+      {filterData.map((section, index) => (
+        <div key={index} className="mb-6">
+          <h3 className="text-lg font-semibold mb-3 text-blue-800">{section.filterType}</h3>
+          <RadioGroup 
+            value={filterParams[section.filterType as keyof typeof filterParams]} 
+            onValueChange={(value) => changeHandler(section.filterType, value)}
+          >
             <div className="space-y-3">
               {section.array.map((item, idx) => {
                 const id = `radio-${index}-${idx}`;
@@ -52,11 +69,11 @@ const FilterCard = () => {
                     <RadioGroupItem
                       id={id}
                       value={item}
-                      className="w-5 h-5 border-2 border-indigo-500 rounded-full data-[state=checked]:bg-indigo-600 focus:outline-none transition"
+                      className="w-5 h-5 border-2 border-indigo-500 rounded-full data-[state=checked]:bg-indigo-600 focus:outline-none transition shrink-0"
                     />
                     <Label
                       htmlFor={id}
-                      className="cursor-pointer text-gray-700 hover:text-indigo-600 transition duration-300"
+                      className="cursor-pointer text-gray-700 hover:text-indigo-600 transition duration-300 text-sm font-medium"
                     >
                       {item}
                     </Label>
@@ -64,12 +81,12 @@ const FilterCard = () => {
                 );
               })}
             </div>
-            {index !== filterData.length - 1 && (
-              <hr className="my-4 border-indigo-200" />
-            )}
-          </div>
-        ))}
-      </RadioGroup>
+          </RadioGroup>
+          {index !== filterData.length - 1 && (
+            <hr className="my-4 border-indigo-200" />
+          )}
+        </div>
+      ))}
 
       <style>{`
         @keyframes fade-in {

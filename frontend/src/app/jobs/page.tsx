@@ -34,26 +34,53 @@ const JobsPage = () => {
     fetchAllJobs();
   }, [dispatch]);
 
-  // Listen to Redux searchedQuery changes from FilterCard and sync to local state
-  const { searchedQuery } = useSelector((store: RootState) => store.job);
-  useEffect(() => {
-    setLocalFilter(searchedQuery);
-  }, [searchedQuery]);
+  // Listen to Redux searchedQuery and filterParams changes
+  const { searchedQuery, filterParams } = useSelector((store: RootState) => store.job);
 
   useEffect(() => {
-    if (localFilter) {
-      const filteredJobs = allJobs.filter((job) => {
+    let filteredJobs = [...allJobs];
+
+    // 1. Text Search (title, description, location)
+    if (searchedQuery) {
+      filteredJobs = filteredJobs.filter((job) => {
         return (
-          job.title.toLowerCase().includes(localFilter.toLowerCase()) ||
-          job.description.toLowerCase().includes(localFilter.toLowerCase()) ||
-          job.location.toLowerCase().includes(localFilter.toLowerCase())
+          job.title.toLowerCase().includes(searchedQuery.toLowerCase()) ||
+          job.description.toLowerCase().includes(searchedQuery.toLowerCase()) ||
+          job.location.toLowerCase().includes(searchedQuery.toLowerCase())
         );
       });
-      setFilterJobs(filteredJobs);
-    } else {
-      setFilterJobs(allJobs);
     }
-  }, [allJobs, localFilter]);
+
+    // 2. Sidebar Filters
+    // Location
+    if (filterParams.Location) {
+        filteredJobs = filteredJobs.filter((job) => 
+            job.location.toLowerCase().includes(filterParams.Location.toLowerCase())
+        );
+    }
+
+    // Industry (mapped to title for now)
+    if (filterParams.Industry) {
+        filteredJobs = filteredJobs.filter((job) => 
+            job.title.toLowerCase().includes(filterParams.Industry.toLowerCase())
+        );
+    }
+
+    // Salary (Parse range e.g. "5 - 10 LPA")
+    if (filterParams.Salary) {
+        const range = filterParams.Salary.match(/(\d+)\s*-\s*(\d+)/);
+        if (range) {
+            const min = parseInt(range[1]);
+            const max = parseInt(range[2]);
+            filteredJobs = filteredJobs.filter((job) => {
+                const jobSalary = typeof job.salary === 'number' ? job.salary : parseInt(job.salary);
+                return jobSalary >= min && jobSalary <= max;
+            });
+        }
+    }
+
+    setFilterJobs(filteredJobs);
+  }, [allJobs, searchedQuery, filterParams]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#f1f5ff] via-[#f8fbff] to-[#edf3ff] text-gray-800 animate-fadeIn">

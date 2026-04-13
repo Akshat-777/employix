@@ -152,6 +152,9 @@ const SignupPage = () => {
                 placeholder="••••••••"
                 required
               />
+              <p className="text-[10px] text-gray-500 mt-1 leading-tight">
+                * Must be at least 8 characters, include uppercase, lowercase, number, and a special character (e.g., @$!%*?&#).
+              </p>
             </div>
 
             <div className="mb-4 flex justify-center gap-6">

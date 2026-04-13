@@ -7,6 +7,11 @@ interface JobState {
     searchJobByText: string;
     allAppliedJobs: any[];
     searchedQuery: string;
+    filterParams: {
+        Location: string;
+        Industry: string;
+        Salary: string;
+    };
 }
 
 const initialState: JobState = {
@@ -16,6 +21,11 @@ const initialState: JobState = {
     searchJobByText: "",
     allAppliedJobs: [],
     searchedQuery: "",
+    filterParams: {
+        Location: "",
+        Industry: "",
+        Salary: "",
+    },
 };
 
 const jobSlice = createSlice({
@@ -39,6 +49,21 @@ const jobSlice = createSlice({
         },
         setSearchedQuery: (state, action: PayloadAction<string>) => {
             state.searchedQuery = action.payload;
+        },
+        setFilterParams: (state, action: PayloadAction<{ category: string, value: string }>) => {
+            const { category, value } = action.payload;
+            state.filterParams = {
+                ...state.filterParams,
+                [category]: value
+            };
+        },
+        clearFilters: (state) => {
+            state.filterParams = {
+                Location: "",
+                Industry: "",
+                Salary: "",
+            };
+            state.searchedQuery = "";
         }
     }
 });
@@ -49,6 +74,8 @@ export const {
     setAllAdminJobs,
     setSearchJobByText, 
     setAllAppliedJobs,
-    setSearchedQuery
+    setSearchedQuery,
+    setFilterParams,
+    clearFilters
 } = jobSlice.actions;
 export default jobSlice.reducer;
