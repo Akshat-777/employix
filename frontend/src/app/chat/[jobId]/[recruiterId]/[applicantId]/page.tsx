@@ -207,14 +207,31 @@ const ChatPage = () => {
                                             >
                                                 {msg.content && <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>}
                                                 {msg.mediaUrl && (
-                                                    <a
-                                                        href={`${API_URL}${msg.mediaUrl}`}
-                                                        target="_blank"
-                                                        rel="noreferrer"
-                                                        className={`block mt-2 text-xs font-bold p-2 rounded-lg bg-black/5 hover:bg-black/10 transition flex items-center gap-2 ${isSender ? 'text-white' : 'text-indigo-600'}`}
-                                                    >
-                                                        <Paperclip size={14} /> View Attachment
-                                                    </a>
+                                                    <div className="mt-3">
+                                                        {msg.mediaUrl.match(/\.(jpeg|jpg|gif|png)$/i) ? (
+                                                            <div className="relative group/img overflow-hidden rounded-xl border border-white/20">
+                                                                <img
+                                                                    src={msg.mediaUrl.startsWith("http") ? msg.mediaUrl : `${API_URL}${msg.mediaUrl}`}
+                                                                    alt="Shared Image"
+                                                                    className="max-w-full h-auto rounded-xl object-cover hover:scale-105 transition-transform duration-500 cursor-pointer"
+                                                                    onClick={() => window.open(msg.mediaUrl.startsWith("http") ? msg.mediaUrl : `${API_URL}${msg.mediaUrl}`, "_blank")}
+                                                                />
+                                                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                                                                    <span className="text-[10px] font-bold text-white uppercase tracking-widest bg-white/20 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/30">Click to expand</span>
+                                                                </div>
+                                                            </div>
+                                                        ) : (
+                                                            <a
+                                                                href={msg.mediaUrl.startsWith("http") ? msg.mediaUrl : `${API_URL}${msg.mediaUrl}`}
+                                                                target="_blank"
+                                                                rel="noreferrer"
+                                                                className={`inline-flex items-center gap-2 text-xs font-bold p-3 rounded-xl bg-black/5 hover:bg-black/10 transition-all border border-white/10 ${isSender ? 'text-white' : 'text-indigo-600'}`}
+                                                            >
+                                                                <Paperclip size={16} /> 
+                                                                <span>View Attachment</span>
+                                                            </a>
+                                                        )}
+                                                    </div>
                                                 )}
                                             </div>
                                             <span className="text-[10px] text-slate-400 mt-1 font-medium px-1 uppercase letter-spacing-wide">

@@ -1,15 +1,18 @@
 import Message from "../models/message.model.js";
-import path from "path";
-import fs from "fs";
+import cloudinary from "../utils/cloudinary.js";
+import getDataUri from "../utils/datauri.js";
 
 export const sendMessage = async (req, res) => {
   try {
     const { senderId, receiverId, jobId, content } = req.body;
-    console.log("Incoming message:", { senderId, receiverId, jobId, content });
 
     let mediaUrl = null;
     if (req.file) {
-      mediaUrl = `/uploads/${req.file.filename}`;
+      const fileUri = getDataUri(req.file);
+      const cloudResponse = await cloudinary.uploader.upload(fileUri.content, {
+        resource_type: "auto", // Automatically detect if it's an image, raw file (PDF), or video
+      });
+      mediaUrl = cloudResponse.secure_url;
     }
 
     const message = new Message({
