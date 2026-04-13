@@ -18,8 +18,8 @@ load_dotenv()
 app = Flask(__name__)
 
 
-FRONTEND_URL = os.getenv("FRONTEND_URL")
-CORS(app, origins=[FRONTEND_URL], supports_credentials=True)
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000")
+CORS(app, origins=[FRONTEND_URL, "http://localhost:3000"], supports_credentials=True)
 
 
 print(" Loading spaCy model...")
@@ -117,6 +117,9 @@ def upload_resume():
 
 
 if __name__ == "__main__":
-    PORT = int(os.getenv("FLASK_PORT", 5002))
-    print(f" Starting Flask server at http://0.0.0.0:{PORT}")
-    app.run(host="0.0.0.0", port=PORT, debug=True)
+    # Use standard PORT environment variable for Render
+    PORT = int(os.getenv("PORT", os.getenv("FLASK_PORT", 5002)))
+    DEBUG = os.getenv("FLASK_DEBUG", "True").lower() == "true"
+    
+    print(f"🚀 Starting Flask server at http://0.0.0.0:{PORT}")
+    app.run(host="0.0.0.0", port=PORT, debug=DEBUG)
