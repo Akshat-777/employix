@@ -115,19 +115,21 @@ const JobDescriptionPage = () => {
             </Badge>
           </div>
 
-          <motion.div whileHover={{ scale: isApplied ? 1 : 1.05 }} whileTap={{ scale: 0.95 }} className="w-full">
-            <Button
-              onClick={isApplied ? undefined : applyJobHandler}
-              disabled={isApplied}
-              className={`w-full rounded-full px-6 py-2 font-medium text-white transition-all duration-300 ${
-                isApplied
-                  ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-gradient-to-r from-indigo-500 to-blue-600 hover:brightness-110'
-              }`}
-            >
-              {isApplied ? '✅ Applied' : 'Apply Now'}
-            </Button>
-          </motion.div>
+          {user?.role !== 'recruiter' && (
+            <motion.div whileHover={{ scale: isApplied ? 1 : 1.05 }} whileTap={{ scale: 0.95 }} className="w-full">
+              <Button
+                onClick={isApplied ? undefined : applyJobHandler}
+                disabled={isApplied}
+                className={`w-full rounded-full px-6 py-2 font-medium text-white transition-all duration-300 ${
+                  isApplied
+                    ? 'bg-gray-400 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-indigo-500 to-blue-600 hover:brightness-110'
+                }`}
+              >
+                {isApplied ? '✅ Applied' : 'Apply Now'}
+              </Button>
+            </motion.div>
+          )}
         </div>
 
         
